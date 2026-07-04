@@ -16,6 +16,16 @@ const company = {
   facebook: 'https://www.facebook.com/fantastictouristservicekerala',
   instagram: 'https://www.instagram.com/fantastictouristservicekerala/',
   instagramHandle: '@fantastictouristservicekerala',
+  // Real posts from the profile, embedded on the site via Instagram's official
+  // embed script. Swap/reorder freely — any instagram.com/p/… or /reel/… URL works.
+  igPosts: [
+    'https://www.instagram.com/reel/DaXyE3zzubc/',
+    'https://www.instagram.com/p/DaSP0XSTICj/',
+    'https://www.instagram.com/reel/DaF47QNzJ1f/',
+    'https://www.instagram.com/reel/DaAe4lQT4Xz/',
+    'https://www.instagram.com/reel/DZ43veKz9HJ/',
+    'https://www.instagram.com/reel/DZpWEVizDLo/',
+  ],
   map: {
     lat: 11.3219059,
     lng: 75.9978715,

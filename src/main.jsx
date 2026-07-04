@@ -9,6 +9,8 @@ import App from './App';
 
 gsap.registerPlugin(ScrollTrigger);
 
+if (import.meta.env.DEV) window.gsap = gsap; // debugging handle
+
 // Note: StrictMode intentionally omitted — its double-invoked dev effects
 // conflict with the imperative GSAP layer work in the hero transition.
 ReactDOM.createRoot(document.getElementById('root')).render(<App />);
