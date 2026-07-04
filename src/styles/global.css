@@ -1,0 +1,218 @@
+/* ============ Fantastic Tourist Service — design system ============ */
+:root {
+  --bg: #0e0d10;
+  --bg-2: #141216;
+  --panel: #1b191f;
+  --line: rgba(244, 241, 236, 0.12);
+  --text: #f4f1ec;
+  --muted: #a49e96;
+  --red: #e02b2b;
+  --red-soft: rgba(224, 43, 43, 0.14);
+  --gold: #f5b942;
+  --font-display: 'Syne', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --nav-h: 78px;
+  --radius: 18px;
+  --container: 1240px;
+  --pad-x: clamp(20px, 4.5vw, 64px);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: auto; /* Lenis owns scrolling */
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+::selection {
+  background: var(--red);
+  color: #fff;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+  background: #2c2830;
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3a353f;
+}
+
+/* ---------- shared layout ---------- */
+.container {
+  width: min(var(--container), 100% - var(--pad-x) * 2);
+  margin-inline: auto;
+}
+
+.section {
+  padding: clamp(72px, 10vw, 130px) 0;
+  position: relative;
+}
+
+/* ---------- typography ---------- */
+.h-display {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+}
+
+.section-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.section-label::before {
+  content: '';
+  width: 34px;
+  height: 1px;
+  background: var(--gold);
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(30px, 4.4vw, 56px);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin-top: 14px;
+}
+
+.section-head {
+  margin-bottom: clamp(36px, 5vw, 64px);
+}
+
+/* split-text reveal helpers */
+.reveal-lines .line {
+  overflow: hidden;
+}
+
+/* ---------- buttons ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  gap: 10px;
+  padding: 14px 26px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 0.01em;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), background 0.3s, color 0.3s, border-color 0.3s;
+  will-change: transform;
+}
+.btn:hover {
+  transform: translateY(-2px);
+}
+.btn:active {
+  transform: translateY(0) scale(0.98);
+}
+.btn-primary {
+  background: var(--red);
+  color: #fff;
+}
+.btn-primary:hover {
+  background: #f03535;
+}
+.btn-ghost {
+  border: 1px solid var(--line);
+  color: var(--text);
+  backdrop-filter: blur(6px);
+}
+.btn-ghost:hover {
+  border-color: rgba(244, 241, 236, 0.4);
+}
+.btn-gold {
+  background: var(--gold);
+  color: #1a1405;
+}
+
+/* ---------- chips ---------- */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-size: 13.5px;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.03);
+  white-space: nowrap;
+}
+.chip::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--gold);
+  flex: none;
+}
+
+/* ---------- utility ---------- */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001s !important;
+    transition-duration: 0.001s !important;
+  }
+}

@@ -1,0 +1,54 @@
+.preloader {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: #0a090c;
+  display: grid;
+  place-items: center;
+  clip-path: inset(0 0 0% 0);
+}
+
+.preloader-inner {
+  text-align: center;
+}
+
+.preloader-word {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(38px, 8vw, 92px);
+  letter-spacing: 0.08em;
+  line-height: 1;
+  color: #fff;
+  display: inline-flex;
+}
+.preloader-word .char-mask {
+  display: inline-block;
+  overflow: hidden;
+}
+.preloader-word .char {
+  display: inline-block;
+  will-change: transform;
+}
+
+.preloader-sub {
+  margin-top: 14px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.preloader-count {
+  margin-top: 34px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+  color: rgba(244, 241, 236, 0.55);
+  font-variant-numeric: tabular-nums;
+}
+.preloader-count::after {
+  content: '%';
+  margin-left: 2px;
+  font-size: 11px;
+}
