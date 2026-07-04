@@ -67,7 +67,21 @@ export default function Hero({ ready }) {
       return;
     }
     const stack = bgStackRef.current;
-    const old = currentLayerRef.current;
+
+    // A click can land mid-transition: finish the story cleanly first.
+    // Everything except the newest layer is stale — drop it, and freeze the
+    // newest one at full coverage so it becomes a solid backdrop.
+    const existing = Array.from(stack.children);
+    existing.slice(0, -1).forEach((l) => {
+      gsap.killTweensOf([l, l.firstChild]);
+      l.remove();
+    });
+    const old = existing[existing.length - 1] || null;
+    if (old) {
+      gsap.killTweensOf(old);
+      gsap.set(old, { clipPath: 'inset(0px 0px 0px 0px round 0px)', opacity: 1 });
+    }
+
     const layer = makeLayer(destinations[active]);
     const img = layer.querySelector('img');
 
@@ -92,6 +106,8 @@ export default function Hero({ ready }) {
       return;
     }
 
+    // The old layer stays fully opaque underneath (no dark flash) — it only
+    // drifts slightly for depth while the new one expands over it.
     const tl = gsap.timeline({
       defaults: { ease: 'expo.inOut' },
       onComplete() {
@@ -102,13 +118,10 @@ export default function Hero({ ready }) {
     tl.to(layer, { clipPath: 'inset(0px 0px 0px 0px round 0px)', duration: 1.15 }, 0)
       .to(img, { scale: 1.06, duration: 1.5, ease: 'expo.out' }, 0);
     if (old) {
-      tl.to(old.querySelector('img'), { scale: '+=0.06', duration: 1.15 }, 0).to(
-        old,
-        { opacity: 0.45, duration: 1.15 },
-        0
-      );
+      tl.to(old.querySelector('img'), { scale: '+=0.05', duration: 1.15 }, 0);
     }
-    return () => tl.kill();
+    // no cleanup kill: interrupted transitions are tidied by the next run's
+    // stale-layer sweep above, so onComplete can always finish its job
   }, [active, originRef]);
 
   /* ---- headline split-text swap ---- */

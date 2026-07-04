@@ -34,7 +34,6 @@ export default function CardRail() {
 
   return (
     <div className="card-rail-wrap">
-      <p className="card-rail-label">Next stops</p>
       <div className="card-rail" ref={railRef}>
         {order.map((i) => {
           const d = destinations[i];
@@ -48,7 +47,7 @@ export default function CardRail() {
               <img src={d.thumb} alt="" loading="lazy" draggable="false" />
               <span className="dest-card-shade" aria-hidden="true" />
               <span className="dest-card-meta">
-                <span className="dest-card-name">{d.name}</span>
+                <span className="dest-card-name">{d.name},</span>
                 <span className="dest-card-region">{d.region}</span>
               </span>
             </button>
