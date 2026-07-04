@@ -25,6 +25,12 @@ const company = {
     'https://www.instagram.com/reel/DaAe4lQT4Xz/',
     'https://www.instagram.com/reel/DZ43veKz9HJ/',
     'https://www.instagram.com/reel/DZpWEVizDLo/',
+    'https://www.instagram.com/p/DZmvXiszz1e/',
+    'https://www.instagram.com/reel/DZYo4oSz5Kn/',
+    'https://www.instagram.com/reel/DZES-zWTcmY/',
+    'https://www.instagram.com/reel/DZB1rWcz7s3/',
+    'https://www.instagram.com/reel/DY6YmbnxRWv/',
+    'https://www.instagram.com/reel/DY3q7AsTj3v/',
   ],
   map: {
     lat: 11.3219059,

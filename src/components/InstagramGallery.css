@@ -15,43 +15,58 @@
   flex-wrap: wrap;
 }
 
-.ig-columns {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: clamp(16px, 2vw, 28px);
-  align-items: start;
+/* ---------- auto-flow marquee ---------- */
+.ig-marquee {
+  overflow: clip;
+  padding: 14px 0 20px;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
+          mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
 }
 
-.ig-col {
+.ig-track {
   display: flex;
-  flex-direction: column;
-  gap: clamp(16px, 2vw, 28px);
-  will-change: transform;
-}
-/* offset middle column so rows don't line up — masonry feel */
-.ig-col:nth-child(2) {
-  margin-top: clamp(30px, 4vw, 64px);
-}
-.ig-col:nth-child(3) {
-  margin-top: clamp(14px, 2vw, 30px);
+  align-items: flex-start;
+  gap: 22px;
+  width: max-content;
+  padding-left: var(--pad-x);
 }
 
 .ig-post {
+  flex: 0 0 clamp(300px, 24vw, 350px);
+  will-change: transform;
+}
+/* zig-zag: alternate cards sit a little lower */
+.ig-post:nth-child(even) {
+  margin-top: 34px;
+}
+
+/* the styled card is separate from the loop target so the collage tilt
+   never fights GSAP's transforms */
+.ig-card {
   border-radius: 18px;
   overflow: hidden;
   background: var(--panel);
   border: 1px solid var(--line);
   box-shadow: 0 22px 50px rgba(0, 0, 0, 0.4);
-  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.35s;
+  transition: rotate 0.45s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.35s;
 }
-.ig-post:hover {
-  transform: translateY(-6px) scale(1.01);
+.ig-post:nth-child(3n + 1) .ig-card {
+  rotate: -1.2deg;
+}
+.ig-post:nth-child(3n + 2) .ig-card {
+  rotate: 1.1deg;
+}
+.ig-post:nth-child(3n) .ig-card {
+  rotate: -0.5deg;
+}
+.ig-card:hover {
+  rotate: 0deg;
   border-color: rgba(245, 185, 66, 0.4);
 }
 
 /* the embed itself — Instagram injects an iframe in place of the blockquote */
-.ig-post .instagram-media,
-.ig-post iframe.instagram-media {
+.ig-card .instagram-media,
+.ig-card iframe.instagram-media {
   margin: 0 !important;
   border: 0 !important;
   border-radius: 0 !important;
@@ -63,34 +78,31 @@
 }
 
 /* placeholder look before the script hydrates */
-.ig-post blockquote.instagram-media {
-  min-height: 380px;
+.ig-card blockquote.instagram-media {
+  min-height: 400px;
   display: grid;
   place-items: center;
   padding: 20px;
 }
-.ig-post blockquote.instagram-media a {
+.ig-card blockquote.instagram-media a {
   color: var(--muted);
   font-size: 13.5px;
   text-align: center;
 }
 
-@media (max-width: 900px) {
-  .ig-columns {
-    grid-template-columns: repeat(2, 1fr);
+@media (max-width: 700px) {
+  .ig-post {
+    flex-basis: min(76vw, 300px);
   }
-  .ig-col:nth-child(3) {
-    display: none;
+  .ig-post:nth-child(even) {
+    margin-top: 22px;
   }
-}
-@media (max-width: 600px) {
-  .ig-columns {
-    grid-template-columns: 1fr;
+  .ig-marquee {
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 4%, #000 96%, transparent);
+            mask-image: linear-gradient(to right, transparent, #000 4%, #000 96%, transparent);
   }
-  .ig-col:nth-child(2) {
-    display: none;
-  }
-  .ig-col {
-    margin-top: 0 !important;
+  .ig-follow {
+    padding: 12px 18px;
+    font-size: 13.5px;
   }
 }

@@ -4,6 +4,7 @@ import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import company from '../data/company';
 import { prefersReducedMotion } from '../hooks/useLenis';
+import horizontalLoop from '../lib/horizontalLoop';
 import './InstagramGallery.css';
 
 const IgIcon = (
@@ -14,29 +15,34 @@ const IgIcon = (
   </svg>
 );
 
-/** Round-robin the posts into `n` masonry columns. */
-function chunkColumns(posts, n) {
-  const cols = Array.from({ length: n }, () => []);
-  posts.forEach((p, i) => cols[i % n].push(p));
-  return cols;
-}
-
 export default function InstagramGallery() {
   const rootRef = useRef(null);
-  const columns = chunkColumns(company.igPosts, 3);
 
-  /* load Instagram's official embed script and hydrate the blockquotes */
+  /* hydrate the embeds only when the section approaches the viewport —
+     twelve Instagram iframes shouldn't weigh down the initial page load */
   useEffect(() => {
-    const hydrate = () => window.instgrm?.Embeds?.process();
-    if (window.instgrm) {
-      hydrate();
-    } else {
-      const s = document.createElement('script');
-      s.src = 'https://www.instagram.com/embed.js';
-      s.async = true;
-      s.onload = hydrate;
-      document.body.appendChild(s);
-    }
+    const el = rootRef.current;
+    const hydrate = () => {
+      if (window.instgrm) {
+        window.instgrm.Embeds.process();
+      } else {
+        const s = document.createElement('script');
+        s.src = 'https://www.instagram.com/embed.js';
+        s.async = true;
+        s.onload = () => window.instgrm?.Embeds?.process();
+        document.body.appendChild(s);
+      }
+    };
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          io.disconnect();
+          hydrate();
+        }
+      },
+      { rootMargin: '1200px' }
+    );
+    io.observe(el);
 
     // embeds grow as they hydrate — keep scroll-trigger positions honest
     let raf = 0;
@@ -44,8 +50,9 @@ export default function InstagramGallery() {
       cancelAnimationFrame(raf);
       raf = requestAnimationFrame(() => ScrollTrigger.refresh());
     });
-    ro.observe(rootRef.current);
+    ro.observe(el);
     return () => {
+      io.disconnect();
       ro.disconnect();
       cancelAnimationFrame(raf);
     };
@@ -54,42 +61,46 @@ export default function InstagramGallery() {
   useGSAP(
     () => {
       if (prefersReducedMotion()) return;
+      const q = gsap.utils.selector(rootRef);
 
-      // staggered entrance for each post card
-      gsap.utils.toArray('.ig-post').forEach((post, i) => {
-        gsap.fromTo(
-          post,
-          { y: 70, opacity: 0, rotate: i % 2 ? 1.2 : -1.2 },
-          {
-            y: 0,
-            opacity: 1,
-            rotate: 0,
-            duration: 0.85,
-            ease: 'power3.out',
-            clearProps: 'transform', // let the CSS hover lift take over afterwards
-            scrollTrigger: { trigger: post, start: 'top 92%', once: true },
-          }
-        );
-      });
+      // the whole marquee fades in once
+      gsap.fromTo(
+        q('.ig-marquee'),
+        { opacity: 0, y: 50 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.9,
+          ease: 'power3.out',
+          scrollTrigger: { trigger: q('.ig-marquee')[0], start: 'top 92%', once: true },
+        }
+      );
 
-      // each masonry column drifts at its own speed while scrolling through
-      gsap.utils.toArray('.ig-col').forEach((col, i) => {
-        const speed = [-46, 34, -22][i % 3];
-        gsap.fromTo(
-          col,
-          { y: -speed },
-          {
-            y: speed,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: '.ig-columns',
-              start: 'top bottom',
-              end: 'bottom top',
-              scrub: 0.6,
-            },
-          }
-        );
-      });
+      // seamless auto-flow, rebuilt per breakpoint because card widths change
+      const mm = gsap.matchMedia();
+      const build = () => {
+        const items = q('.ig-post');
+        if (!items.length) return () => {};
+        const loop = horizontalLoop(items, { repeat: -1, speed: 0.42, paddingRight: 22 });
+        const wrap = q('.ig-marquee')[0];
+        const rest = () => gsap.to(loop, { timeScale: 0, duration: 0.7, overwrite: true });
+        const flow = () => gsap.to(loop, { timeScale: 1, duration: 0.7, overwrite: true });
+        wrap.addEventListener('mouseenter', rest);
+        wrap.addEventListener('mouseleave', flow);
+        wrap.addEventListener('touchstart', rest, { passive: true });
+        wrap.addEventListener('touchend', flow);
+        return () => {
+          wrap.removeEventListener('mouseenter', rest);
+          wrap.removeEventListener('mouseleave', flow);
+          wrap.removeEventListener('touchstart', rest);
+          wrap.removeEventListener('touchend', flow);
+          loop.kill();
+        };
+      };
+      mm.add('(min-width: 701px)', build);
+      mm.add('(max-width: 700px)', build);
+
+      return () => mm.revert();
     },
     { scope: rootRef }
   );
@@ -100,32 +111,34 @@ export default function InstagramGallery() {
         <div className="ig-head">
           <div>
             <span className="section-label">From our journeys</span>
-            <h2 className="section-title">Straight from
+            <h2 className="section-title">
+              Straight from
               <br />
-              our Instagram</h2>
+              our Instagram
+            </h2>
           </div>
           <a className="btn btn-ghost ig-follow" href={company.instagram} target="_blank" rel="noreferrer">
             {IgIcon}
             Follow {company.instagramHandle}
           </a>
         </div>
+      </div>
 
-        <div className="ig-columns">
-          {columns.map((posts, c) => (
-            <div className="ig-col" key={c}>
-              {posts.map((url) => (
-                <div className="ig-post" key={url}>
-                  <blockquote
-                    className="instagram-media"
-                    data-instgrm-permalink={url}
-                    data-instgrm-version="14"
-                  >
-                    <a href={url} target="_blank" rel="noreferrer">
-                      View this post on Instagram
-                    </a>
-                  </blockquote>
-                </div>
-              ))}
+      <div className="ig-marquee">
+        <div className="ig-track">
+          {company.igPosts.map((url) => (
+            <div className="ig-post" key={url}>
+              <div className="ig-card">
+                <blockquote
+                  className="instagram-media"
+                  data-instgrm-permalink={url}
+                  data-instgrm-version="14"
+                >
+                  <a href={url} target="_blank" rel="noreferrer">
+                    View this post on Instagram
+                  </a>
+                </blockquote>
+              </div>
             </div>
           ))}
         </div>

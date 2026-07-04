@@ -1,8 +1,8 @@
 .card-rail-wrap {
   min-width: 0;
-  width: 100%;
-  /* bleed past the container so cards get cut by the screen edge,
-     exactly like the reference design */
+  /* bleed past the container so cards get cut by the screen edge, exactly
+     like the reference design (no explicit width — the grid stretch plus the
+     negative margin is what lets the box extend to the viewport edge) */
   margin-right: calc((100vw - min(var(--container), 100vw - var(--pad-x) * 2)) / -2);
 }
 
@@ -77,8 +77,14 @@
   .card-rail-wrap {
     margin-right: calc(var(--pad-x) * -1);
   }
+  .card-rail {
+    scroll-snap-type: x proximity;
+    padding: 10px 0 14px;
+  }
   .dest-card {
-    width: 158px;
+    width: 168px;
+    scroll-snap-align: start;
+    border-radius: 14px;
   }
   .dest-card-name {
     font-size: 16px;

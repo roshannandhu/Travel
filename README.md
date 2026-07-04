@@ -20,6 +20,7 @@ Deploy by uploading the `dist/` folder to any static host (Netlify, Vercel, GitH
 | --- | --- |
 | Package text — descriptions, highlights, itineraries, duration, best time | `src/data/destinations.js` |
 | Phones, branches, services, socials, map location, WhatsApp number | `src/data/company.js` |
+| Instagram posts shown on the site (`igPosts` — any post/reel URL works) | `src/data/company.js` |
 
 ## Images
 

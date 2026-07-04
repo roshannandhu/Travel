@@ -19,20 +19,44 @@ export default function DestinationsGrid() {
   useGSAP(
     () => {
       if (prefersReducedMotion()) return;
-      gsap.utils.toArray('.dg-card').forEach((card, i) => {
+      const q = gsap.utils.selector(rootRef);
+      const mm = gsap.matchMedia();
+
+      // desktop/tablet: cards rise in as each row scrolls into view
+      mm.add('(min-width: 701px)', () => {
+        q('.dg-card').forEach((card, i) => {
+          gsap.fromTo(
+            card,
+            { y: 64, opacity: 0 },
+            {
+              y: 0,
+              opacity: 1,
+              duration: 0.8,
+              ease: 'power3.out',
+              delay: (i % 3) * 0.08,
+              scrollTrigger: { trigger: card, start: 'top 90%', once: true },
+            }
+          );
+        });
+      });
+
+      // phone: the strip slides in from the right as one ripple
+      mm.add('(max-width: 700px)', () => {
         gsap.fromTo(
-          card,
-          { y: 64, opacity: 0 },
+          q('.dg-card'),
+          { x: 80, opacity: 0 },
           {
-            y: 0,
+            x: 0,
             opacity: 1,
-            duration: 0.8,
+            duration: 0.7,
             ease: 'power3.out',
-            delay: (i % 3) * 0.08,
-            scrollTrigger: { trigger: card, start: 'top 90%', once: true },
+            stagger: 0.07,
+            scrollTrigger: { trigger: q('.dg-grid')[0], start: 'top 90%', once: true },
           }
         );
       });
+
+      return () => mm.revert();
     },
     { scope: rootRef }
   );
@@ -52,6 +76,7 @@ export default function DestinationsGrid() {
           <p className="dg-blurb">
             Pick a place — the page takes you there. Every route is escorted by our own drivers and
             crew, with hotels, food and sightseeing handled end-to-end.
+            <span className="dg-swipe-hint" aria-hidden="true">Swipe to explore →</span>
           </p>
         </div>
 

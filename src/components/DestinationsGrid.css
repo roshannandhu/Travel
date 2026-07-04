@@ -99,11 +99,18 @@
   transform: rotate(45deg);
 }
 
+.dg-swipe-hint {
+  display: none;
+}
+
 @media (max-width: 900px) {
   .dg-head {
     flex-direction: column;
     align-items: flex-start;
   }
+}
+
+@media (min-width: 701px) and (max-width: 900px) {
   .dg-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -114,8 +121,34 @@
   }
 }
 
-@media (max-width: 560px) {
+/* phone: full-bleed swipeable strip with snap */
+@media (max-width: 700px) {
   .dg-grid {
-    grid-template-columns: 1fr;
+    display: flex;
+    gap: 14px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    margin-inline: calc(var(--pad-x) * -1);
+    padding-inline: var(--pad-x);
+    padding-bottom: 8px;
+    scrollbar-width: none;
+  }
+  .dg-grid::-webkit-scrollbar {
+    display: none;
+  }
+  .dg-card,
+  .dg-card:nth-child(4n + 1) {
+    flex: 0 0 min(74vw, 300px);
+    aspect-ratio: 4 / 5;
+    scroll-snap-align: center;
+  }
+  .dg-swipe-hint {
+    display: block;
+    margin-top: 10px;
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
   }
 }
